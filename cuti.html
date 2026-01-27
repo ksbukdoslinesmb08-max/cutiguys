@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Pengajuan Cuti Staff</title>
+    <title>Form Pengajuan Cuti Staff - Multi Mode</title>
     <style>
         :root {
             --primary-color: #4e54c8;
             --secondary-color: #8f94fb;
             --accent-color: #ff6b6b;
+            --sidebar-bg: rgba(255, 255, 255, 0.15);
+            --sidebar-hover: rgba(255, 255, 255, 0.25);
             --bg-color: #f0f2f5;
             --card-bg: rgba(255, 255, 255, 0.95);
             --text-color: #333;
@@ -33,33 +35,92 @@
             color: var(--text-color);
         }
 
-        .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+        /* Main Layout Wrapper */
+        .layout-wrapper {
+            display: flex;
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            padding: 2rem;
             box-shadow: var(--shadow);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            min-height: 600px;
         }
 
-        /* Responsive Layout for Mobile */
-        @media (max-width: 768px) {
-            .container {
-                grid-template-columns: 1fr;
-                padding: 1.5rem;
-            }
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            padding: 14px 16px;
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-btn:hover {
+            background: var(--sidebar-hover);
+            color: white;
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            height: 100%;
         }
 
         /* Section Styling */
-        .section-header {
-            margin-bottom: 1.5rem;
-        }
-
         .section-header h2 {
             color: white;
             font-size: 1.5rem;
@@ -85,15 +146,16 @@
         /* Form Elements */
         .form-group {
             margin-bottom: 1.2rem;
-            position: relative;
         }
 
         label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         input, textarea, select {
@@ -101,7 +163,7 @@
             padding: 12px 15px;
             border: 2px solid #e1e1e1;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             transition: all 0.3s ease;
             outline: none;
             background: #fff;
@@ -112,15 +174,34 @@
             box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.1);
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
         .date-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 1rem;
+        }
+
+        /* Specific Styling for Dynamic Sections */
+        .mode-section {
+            display: none; /* Hidden by default */
+            padding-top: 10px;
+            border-top: 1px dashed #ccc;
+            margin-top: 10px;
+        }
+        
+        .mode-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .date-group-label {
+            font-size: 0.8rem;
+            color: var(--primary-color);
+            font-weight: 700;
+            margin: 1rem 0 0.5rem 0;
+            background: rgba(78, 84, 200, 0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
         }
 
         /* Result/Preview Area */
@@ -134,7 +215,8 @@
             line-height: 1.6;
             margin-bottom: 1rem;
             border: 1px solid #444;
-            position: relative;
+            min-height: 200px;
+            font-size: 0.9rem;
         }
 
         .preview-label {
@@ -202,238 +284,404 @@
             opacity: 1;
         }
 
-        /* Helper for icons */
-        .icon {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
+        /* Duration Badge Helper */
+        .duration-hint {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+            text-align: right;
+            font-style: italic;
         }
 
-        /* Stats Badge */
-        .stats-badge {
-            display: inline-block;
-            background: rgba(78, 84, 200, 0.1);
-            color: var(--primary-color);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-top: 5px;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .layout-wrapper {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                padding: 1rem;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+            }
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-btn {
+                margin-bottom: 0;
+                margin-right: 10px;
+                white-space: nowrap;
+                flex: 1;
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- Input Section -->
-        <div class="input-section">
+    <div class="layout-wrapper">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <svg style="width:24px;height:24px;fill:white" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M11,17H13V7H11V17Z" /></svg>
+                Admin Cuti
+            </div>
+            
+            <button class="nav-btn active" onclick="switchMode('standard')" id="btnStandard">
+                <svg viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9L10,17Z" /></svg>
+                Cuti Biasa
+            </button>
+            
+            <button class="nav-btn" onclick="switchMode('combined')" id="btnCombined">
+                <svg viewBox="0 0 24 24"><path d="M16,17H5V7H16L19.55,12L16,17M17.63,5.84C17.27,5.33 16.67,5 16,5H5A2,2 0 0,0 3,7V17A2,2 0 0,0 5,19H16C16.67,19 17.27,18.66 17.63,18.15L22,12L17.63,5.84Z" /></svg>
+                Kerja + Lokal
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
             <div class="section-header">
-                <h2>
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M9,10.5A1.5,1.5 0 0,0 7.5,12A1.5,1.5 0 0,0 9,13.5A1.5,1.5 0 0,0 10.5,12A1.5,1.5 0 0,0 9,10.5M12,12A3,3 0 0,1 15,15H9A3,3 0 0,1 12,12M12,7A1,1 0 0,1 13,8A1,1 0 0,1 12,9A1,1 0 0,1 11,8A1,1 0 0,1 12,7Z" /></svg>
-                    Form Pengajuan
-                </h2>
-                <p>Isi data di bawah untuk menghasilkan format teks otomatis.</p>
+                <h2 id="pageTitle">Form Pengajuan Cuti Biasa</h2>
+                <p id="pageDesc">Gunakan formulir ini untuk pengajuan cuti standar.</p>
             </div>
 
-            <div class="card">
-                <form id="cutiForm">
-                    <div class="form-group">
-                        <label for="perihal">Perihal</label>
-                        <input type="text" id="perihal" placeholder="Contoh:" autocomplete="off">
-                    </div>
+            <div class="content-grid">
+                <!-- Input Section -->
+                <div class="input-section">
+                    <div class="card">
+                        <form id="cutiForm">
+                            <!-- Common Fields -->
+                            <div class="form-group">
+                                <label for="perihal">Perihal</label>
+                                <input type="text" id="perihal" placeholder="Contoh: Cuti Tahunan" autocomplete="off">
+                            </div>
 
-                    <div class="form-group">
-                        <label for="noPaspor">No Paspor</label>
-                        <input type="text" id="noPaspor" placeholder="Contoh:" autocomplete="off">
-                    </div>
+                            <div class="date-row">
+                                <div class="form-group">
+                                    <label for="namaStaff">Nama Staff</label>
+                                    <input type="text" id="namaStaff" placeholder="Nama Lengkap" autocomplete="off">
+                                </div>
+                                <div class="form-group">
+                                    <label for="noPaspor">No Paspor</label>
+                                    <input type="text" id="noPaspor" placeholder="Nomor Paspor" autocomplete="off">
+                                </div>
+                            </div>
 
-                    <div class="form-group">
-                        <label for="namaStaff">Nama Staff</label>
-                        <input type="text" id="namaStaff" placeholder="Contoh:" autocomplete="off">
-                    </div>
+                            <!-- Mode 1: Standard (Single Date Range) -->
+                            <div id="sectionStandard" class="mode-section active">
+                                <div class="date-group-label">Rentang Tanggal Cuti</div>
+                                <div class="date-row">
+                                    <div class="form-group">
+                                        <label for="tglMulaiStd">Tanggal Mulai</label>
+                                        <input type="date" id="tglMulaiStd">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tglSelesaiStd">Tanggal Selesai</label>
+                                        <input type="date" id="tglSelesaiStd">
+                                    </div>
+                                </div>
+                                <div id="hintStd" class="duration-hint"></div>
+                            </div>
 
-                    <div class="date-row">
-                        <div class="form-group">
-                            <label for="tglMulai">Tanggal Mulai</label>
-                            <input type="date" id="tglMulai">
-                        </div>
-                        <div class="form-group">
-                            <label for="tglSelesai">Tanggal Selesai</label>
-                            <input type="date" id="tglSelesai">
-                        </div>
-                    </div>
-                    <div id="durationDisplay" style="text-align: right; margin-bottom: 1rem; font-size: 0.9rem; color: #666; height: 1.2rem;"></div>
+                            <!-- Mode 2: Combined (Kerja + Lokal) -->
+                            <div id="sectionCombined" class="mode-section">
+                                <!-- Cuti Kerja -->
+                                <div class="date-group-label">1. CUTI KERJA</div>
+                                <div class="date-row">
+                                    <div class="form-group">
+                                        <label for="tglMulaiKerja">Mulai</label>
+                                        <input type="date" id="tglMulaiKerja">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tglSelesaiKerja">Selesai</label>
+                                        <input type="date" id="tglSelesaiKerja">
+                                    </div>
+                                </div>
+                                <div id="hintKerja" class="duration-hint"></div>
 
-                    <div class="form-group">
-                        <label for="keterangan">Keterangan</label>
-                        <textarea id="keterangan" placeholder="Contoh: "></textarea>
+                                <!-- Cuti Lokal -->
+                                <div class="date-group-label">2. CUTI LOKAL</div>
+                                <div class="date-row">
+                                    <div class="form-group">
+                                        <label for="tglMulaiLokal">Mulai</label>
+                                        <input type="date" id="tglMulaiLokal">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="tglSelesaiLokal">Selesai</label>
+                                        <input type="date" id="tglSelesaiLokal">
+                                    </div>
+                                </div>
+                                <div id="hintLokal" class="duration-hint"></div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 1.5rem;">
+                                <label for="keterangan">Keterangan (Opsional)</label>
+                                <textarea id="keterangan" placeholder="Catatan tambahan..." rows="2"></textarea>
+                            </div>
+                        </form>
                     </div>
-                </form>
+                </div>
+
+                <!-- Output Section -->
+                <div class="output-section">
+                    <div class="card" style="display: flex; flex-direction: column; height: 100%;">
+                        <span class="preview-label">Format Output</span>
+                        <div class="preview-area" id="outputResult">Belum ada data yang diisi...</div>
+                        
+                        <button class="btn-action btn-primary" onclick="copyToClipboard()">
+                            <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;fill:white"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" /></svg>
+                            Salin Teks
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Output Section -->
-        <div class="output-section">
-            <div class="section-header">
-                <h2>
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19Z" /></svg>
-                    Hasil Pengajuan
-                </h2>
-                <p>Salin teks di bawah ini dan tempel ke Spreadsheet / Chat.</p>
-            </div>
-
-            <div class="card" style="display: flex; flex-direction: column;">
-                <span class="preview-label">Format Output (A13)</span>
-                <div class="preview-area" id="outputResult">Belum ada data yang diisi...</div>
-                
-                <button class="btn-action btn-primary" onclick="copyToClipboard()">
-                    <svg class="icon" viewBox="0 0 24 24"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" /></svg>
-                    Salin Teks
-                </button>
-            </div>
-
-            <div style="margin-top: 2rem; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8rem;">
-                &copy; 2024 System Pengajuan Cuti Internal
-            </div>
-        </div>
+        </main>
     </div>
 
     <!-- Toast Element -->
     <div id="toast" class="toast">
         <svg style="width:20px;height:20px;fill:white" viewBox="0 0 24 24"><path d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z" /></svg>
-        Data berhasil disalin!
+        <span id="toastMsg">Data berhasil disalin!</span>
     </div>
 
     <script>
-        // Elements
+        // State
+        let currentMode = 'standard'; // 'standard' or 'combined'
+
+        // Elements - Common
         const inputs = {
             perihal: document.getElementById('perihal'),
-            noPaspor: document.getElementById('noPaspor'),
             namaStaff: document.getElementById('namaStaff'),
-            tglMulai: document.getElementById('tglMulai'),
-            tglSelesai: document.getElementById('tglSelesai'),
+            noPaspor: document.getElementById('noPaspor'),
             keterangan: document.getElementById('keterangan')
         };
 
-        const outputResult = document.getElementById('outputResult');
-        const durationDisplay = document.getElementById('durationDisplay');
-        const toast = document.getElementById('toast');
+        // Elements - Standard Mode
+        const inputsStd = {
+            mulai: document.getElementById('tglMulaiStd'),
+            selesai: document.getElementById('tglSelesaiStd'),
+            hint: document.getElementById('hintStd')
+        };
 
-        // Helper: Format Date to Indonesian String (e.g., 31 Maret 2026)
+        // Elements - Combined Mode
+        const inputsComb = {
+            kerjaMulai: document.getElementById('tglMulaiKerja'),
+            kerjaSelesai: document.getElementById('tglSelesaiKerja'),
+            kerjaHint: document.getElementById('hintKerja'),
+            lokalMulai: document.getElementById('tglMulaiLokal'),
+            lokalSelesai: document.getElementById('tglSelesaiLokal'),
+            lokalHint: document.getElementById('hintLokal')
+        };
+
+        const outputResult = document.getElementById('outputResult');
+        const toast = document.getElementById('toast');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageDesc = document.getElementById('pageDesc');
+        
+        // Helper: Format Date (Example: 29 januari 2026)
+        // Using lower case for month to match user request exactly
         function formatDateIndo(dateString) {
             if (!dateString) return '';
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
             const date = new Date(dateString);
-            return date.toLocaleDateString('id-ID', options);
+            const months = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            const day = date.getDate();
+            const month = months[date.getMonth()];
+            const year = date.getFullYear();
+            return `${day} ${month} ${year}`;
         }
 
-        // Helper: Calculate Days Difference
-        function calculateDays(start, end) {
-            if (!start || !end) return 0;
-            const startDate = new Date(start);
-            const endDate = new Date(end);
+        // Helper: Calculate Days
+        function getDaysDiff(startStr, endStr) {
+            if (!startStr || !endStr) return 0;
+            const start = new Date(startStr);
+            const end = new Date(endStr);
+            const diffTime = Math.abs(end - start);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        }
+
+        // Switch Mode Logic
+        function switchMode(mode) {
+            currentMode = mode;
             
-            // Calculate difference in milliseconds
-            const diffTime = Math.abs(endDate - startDate);
-            // Convert to days (+1 to include the start date in the count)
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-            return diffDays;
+            // UI Updates
+            document.getElementById('btnStandard').classList.toggle('active', mode === 'standard');
+            document.getElementById('btnCombined').classList.toggle('active', mode === 'combined');
+            
+            document.getElementById('sectionStandard').classList.toggle('active', mode === 'standard');
+            document.getElementById('sectionCombined').classList.toggle('active', mode === 'combined');
+
+            // Title & Description Updates
+            if (mode === 'standard') {
+                pageTitle.textContent = "Form Pengajuan Cuti Biasa";
+                pageDesc.textContent = "Gunakan formulir ini untuk pengajuan cuti standar.";
+                if(!inputs.perihal.value) inputs.perihal.placeholder = "Contoh: Cuti Tahunan";
+            } else {
+                pageTitle.textContent = "Form Cuti Gabungan";
+                pageDesc.textContent = "Input Cuti Kerja dan Cuti Lokal secara terpisah.";
+                // Pre-fill perihal if empty to help user
+                if(!inputs.perihal.value) {
+                    inputs.perihal.value = "CUTI KERJA + CUTI LOKAL";
+                }
+            }
+            generateOutput();
         }
 
-        // Main Function: Generate Output
+        // Main Generate Function
         function generateOutput() {
-            // Get values
+            // Common Data
             const perihal = inputs.perihal.value.trim().toUpperCase();
-            const noPaspor = inputs.noPaspor.value.trim();
             const namaStaff = inputs.namaStaff.value.trim().toUpperCase();
-            const tglMulai = inputs.tglMulai.value;
-            const tglSelesai = inputs.tglSelesai.value;
+            const noPaspor = inputs.noPaspor.value.trim();
             const keterangan = inputs.keterangan.value.trim();
 
-            // Update duration badge live
-            if (tglMulai && tglSelesai) {
-                const days = calculateDays(tglMulai, tglSelesai);
-                // Check if end date is before start date
-                if (new Date(tglSelesai) < new Date(tglMulai)) {
-                    durationDisplay.innerHTML = '<span style="color:red">Tanggal selesai tidak valid</span>';
-                } else {
-                    durationDisplay.textContent = `Durasi: ${days} Hari`;
-                }
-            } else {
-                durationDisplay.textContent = '';
-            }
+            // Validation Helper
+            const isValid = () => namaStaff;
 
-            // Validation: If fields are empty, show placeholder
-            if (!perihal && !noPaspor && !namaStaff && !tglMulai && !keterangan) {
+            if (!isValid()) {
                 outputResult.textContent = "Belum ada data yang diisi...";
                 outputResult.style.color = "#666";
                 return;
             }
 
-            // Construct Text Block
-            // Format Tanggal: Start - End (Total hari)
-            let dateText = "";
-            let daysText = "";
-            
-            if (tglMulai && tglSelesai) {
-                const days = calculateDays(tglMulai, tglSelesai);
-                const startStr = formatDateIndo(tglMulai);
-                const endStr = formatDateIndo(tglSelesai);
-                dateText = `${startStr} - ${endStr}`;
-                daysText = `(${days} hari)`;
-            } else if (tglMulai) {
-                dateText = formatDateIndo(tglMulai);
-            } else {
-                dateText = "[TANGGAL BELUM DIISI]";
-            }
+            let finalText = "";
+            const situs = "LINETOGEL";
 
-            const finalText = 
+            if (currentMode === 'standard') {
+                // --- Logic for Standard Mode ---
+                const tglMulai = inputsStd.mulai.value;
+                const tglSelesai = inputsStd.selesai.value;
+
+                // Calculate Days
+                let daysText = "";
+                let dateText = "[TANGGAL BELUM LENGKAP]";
+                
+                if (tglMulai && tglSelesai) {
+                    const days = getDaysDiff(tglMulai, tglSelesai);
+                    if (new Date(tglSelesai) < new Date(tglMulai)) {
+                        inputsStd.hint.textContent = "Tanggal tidak valid";
+                        inputsStd.hint.style.color = "red";
+                        return;
+                    }
+                    inputsStd.hint.textContent = `Durasi: ${days} Hari`;
+                    inputsStd.hint.style.color = "#666";
+                    
+                    dateText = `${formatDateIndo(tglMulai)} - ${formatDateIndo(tglSelesai)}`;
+                    daysText = `(${days} hari)`;
+                } else {
+                    inputsStd.hint.textContent = "";
+                }
+
+                finalText = 
 `PENGAJUAN CUTI STAFF : 
-Situs : Linetogel
+Situs : ${situs}
 Perihal : ${perihal || '-'}
 No Paspor : (${noPaspor || '-'})
 Nama Staff : ${namaStaff || '-'}
 Tanggal Pengajuan : ${dateText} ${daysText}
 Keterangan : ${keterangan || '-'}`;
 
+            } else {
+                // --- Logic for Combined Mode (Kerja + Lokal) ---
+                
+                // 1. Process Cuti Kerja
+                const tglKM = inputsComb.kerjaMulai.value;
+                const tglKS = inputsComb.kerjaSelesai.value;
+                let textKerja = "-";
+                
+                if (tglKM && tglKS) {
+                    const days = getDaysDiff(tglKM, tglKS);
+                    if (new Date(tglKS) < new Date(tglKM)) {
+                        inputsComb.kerjaHint.textContent = "Invalid date";
+                        inputsComb.kerjaHint.style.color = "red";
+                    } else {
+                        inputsComb.kerjaHint.textContent = `${days} Hari`;
+                        inputsComb.kerjaHint.style.color = "#666";
+                        textKerja = `${formatDateIndo(tglKM)} - ${formatDateIndo(tglKS)} ( ${days} hari )`;
+                    }
+                } else {
+                    inputsComb.kerjaHint.textContent = "";
+                }
+
+                // 2. Process Cuti Lokal
+                const tglLM = inputsComb.lokalMulai.value;
+                const tglLS = inputsComb.lokalSelesai.value;
+                let textLokal = "-";
+
+                if (tglLM && tglLS) {
+                    const days = getDaysDiff(tglLM, tglLS);
+                    if (new Date(tglLS) < new Date(tglLM)) {
+                        inputsComb.lokalHint.textContent = "Invalid date";
+                        inputsComb.lokalHint.style.color = "red";
+                    } else {
+                        inputsComb.lokalHint.textContent = `${days} Hari`;
+                        inputsComb.lokalHint.style.color = "#666";
+                        textLokal = `${formatDateIndo(tglLM)} - ${formatDateIndo(tglLS)} ( ${days} hari )`;
+                    }
+                } else {
+                    inputsComb.lokalHint.textContent = "";
+                }
+
+                // Format Output Sesuai Request
+                finalText = 
+`PENGAJUAN CUTI STAFF :
+Situs : ${situs}
+Perihal : ${perihal || 'CUTI KERJA + CUTI LOKAL'}
+No Paspor : ( ${noPaspor || '-'} )
+Nama Staff : ${namaStaff}
+CUTI KERJA : ${textKerja}
+CUTI LOKAL : ${textLokal}`;
+                
+                if(keterangan) {
+                    finalText += `\nKeterangan : ${keterangan}`;
+                }
+            }
+
             outputResult.textContent = finalText;
-            outputResult.style.color = "#dfe6e9"; // Reset color to light gray
+            outputResult.style.color = "#dfe6e9";
         }
 
-        // Event Listeners: Update on every keystroke/change
-        Object.values(inputs).forEach(input => {
-            input.addEventListener('input', generateOutput);
+        // Event Listeners Binding
+        Object.values(inputs).forEach(el => el.addEventListener('input', generateOutput));
+        Object.values(inputsStd).forEach(el => {
+            if(el.tagName === 'INPUT') el.addEventListener('change', generateOutput);
+        });
+        Object.values(inputsComb).forEach(el => {
+            if(el.tagName === 'INPUT') el.addEventListener('change', generateOutput);
         });
 
-        // Copy to Clipboard Function
+        // Copy to Clipboard
         function copyToClipboard() {
             const textToCopy = outputResult.textContent;
-            
-            if (textToCopy === "Belum ada data yang diisi...") {
+            if (textToCopy.includes("Belum ada data")) {
                 showToast("Isi data terlebih dahulu!", "#ff7675");
                 return;
             }
 
             navigator.clipboard.writeText(textToCopy).then(() => {
                 showToast("Data berhasil disalin!", "#00b894");
-            }).catch(err => {
-                console.error('Gagal menyalin: ', err);
-                showToast("Gagal menyalin text", "#ff7675");
+            }).catch(() => {
+                showToast("Gagal menyalin", "#ff7675");
             });
         }
 
-        // Toast Notification Logic
-        function showToast(message, color) {
-            toast.innerHTML = `
-                <svg style="width:20px;height:20px;fill:white" viewBox="0 0 24 24"><path d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z" /></svg>
-                ${message}
-            `;
-            toast.style.background = color;
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+        // Toast Logic
+        function showToast(msg, color) {
+            const t = document.getElementById('toast');
+            const tm = document.getElementById('toastMsg');
+            tm.textContent = msg;
+            t.style.background = color;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
         }
     </script>
 </body>
