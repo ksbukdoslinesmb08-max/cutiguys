@@ -1,1 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pengajuan Cuti Staff</title>
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #8f94fb;
+            --accent-color: #ff6b6b;
+            --bg-color: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #333;
+            --border-radius: 12px;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-color);
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            width: 100%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Responsive Layout for Mobile */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                padding: 1.5rem;
+            }
+        }
+
+        /* Section Styling */
+        .section-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            height: fit-content;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .date-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        /* Result/Preview Area */
+        .preview-area {
+            background: #2d3436;
+            color: #dfe6e9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            border: 1px solid #444;
+            position: relative;
+        }
+
+        .preview-label {
+            color: #aaa;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            box-shadow: 0 4px 15px rgba(78, 84, 200, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(78, 84, 200, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #00b894;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Helper for icons */
+        .icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Stats Badge */
+        .stats-badge {
+            display: inline-block;
+            background: rgba(78, 84, 200, 0.1);
+            color: var(--primary-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Input Section -->
+        <div class="input-section">
+            <div class="section-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M19,3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19M9,10.5A1.5,1.5 0 0,0 7.5,12A1.5,1.5 0 0,0 9,13.5A1.5,1.5 0 0,0 10.5,12A1.5,1.5 0 0,0 9,10.5M12,12A3,3 0 0,1 15,15H9A3,3 0 0,1 12,12M12,7A1,1 0 0,1 13,8A1,1 0 0,1 12,9A1,1 0 0,1 11,8A1,1 0 0,1 12,7Z" /></svg>
+                    Form Pengajuan
+                </h2>
+                <p>Isi data di bawah untuk menghasilkan format teks otomatis.</p>
+            </div>
+
+            <div class="card">
+                <form id="cutiForm">
+                    <div class="form-group">
+                        <label for="perihal">Perihal</label>
+                        <input type="text" id="perihal" placeholder="Contoh: CUTI AMBIL PASSPORT" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="noPaspor">No Paspor</label>
+                        <input type="text" id="noPaspor" placeholder="Contoh: E5112965" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="namaStaff">Nama Staff</label>
+                        <input type="text" id="namaStaff" placeholder="Contoh: PRIMA NUGRAHA" autocomplete="off">
+                    </div>
+
+                    <div class="date-row">
+                        <div class="form-group">
+                            <label for="tglMulai">Tanggal Mulai</label>
+                            <input type="date" id="tglMulai">
+                        </div>
+                        <div class="form-group">
+                            <label for="tglSelesai">Tanggal Selesai</label>
+                            <input type="date" id="tglSelesai">
+                        </div>
+                    </div>
+                    <div id="durationDisplay" style="text-align: right; margin-bottom: 1rem; font-size: 0.9rem; color: #666; height: 1.2rem;"></div>
+
+                    <div class="form-group">
+                        <label for="keterangan">Keterangan</label>
+                        <textarea id="keterangan" placeholder="Contoh: CUTI INDO & Penambahan cuti 2 hari sistem potong gaji 1:3"></textarea>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Output Section -->
+        <div class="output-section">
+            <div class="section-header">
+                <h2>
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M14,17H7V15H14M17,13H7V11H17M17,9H7V7H17M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3M19,19H5V5H19V19Z" /></svg>
+                    Hasil Pengajuan
+                </h2>
+                <p>Salin teks di bawah ini dan tempel ke Spreadsheet / Chat.</p>
+            </div>
+
+            <div class="card" style="display: flex; flex-direction: column;">
+                <span class="preview-label">Format Output (A13)</span>
+                <div class="preview-area" id="outputResult">Belum ada data yang diisi...</div>
+                
+                <button class="btn-action btn-primary" onclick="copyToClipboard()">
+                    <svg class="icon" viewBox="0 0 24 24"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" /></svg>
+                    Salin Teks
+                </button>
+            </div>
+
+            <div style="margin-top: 2rem; text-align: center; color: rgba(255,255,255,0.6); font-size: 0.8rem;">
+                &copy; 2024 System Pengajuan Cuti Internal
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Element -->
+    <div id="toast" class="toast">
+        <svg style="width:20px;height:20px;fill:white" viewBox="0 0 24 24"><path d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z" /></svg>
+        Data berhasil disalin!
+    </div>
+
+    <script>
+        // Elements
+        const inputs = {
+            perihal: document.getElementById('perihal'),
+            noPaspor: document.getElementById('noPaspor'),
+            namaStaff: document.getElementById('namaStaff'),
+            tglMulai: document.getElementById('tglMulai'),
+            tglSelesai: document.getElementById('tglSelesai'),
+            keterangan: document.getElementById('keterangan')
+        };
+
+        const outputResult = document.getElementById('outputResult');
+        const durationDisplay = document.getElementById('durationDisplay');
+        const toast = document.getElementById('toast');
+
+        // Helper: Format Date to Indonesian String (e.g., 31 Maret 2026)
+        function formatDateIndo(dateString) {
+            if (!dateString) return '';
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', options);
+        }
+
+        // Helper: Calculate Days Difference
+        function calculateDays(start, end) {
+            if (!start || !end) return 0;
+            const startDate = new Date(start);
+            const endDate = new Date(end);
+            
+            // Calculate difference in milliseconds
+            const diffTime = Math.abs(endDate - startDate);
+            // Convert to days (+1 to include the start date in the count)
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            return diffDays;
+        }
+
+        // Main Function: Generate Output
+        function generateOutput() {
+            // Get values
+            const perihal = inputs.perihal.value.trim().toUpperCase();
+            const noPaspor = inputs.noPaspor.value.trim();
+            const namaStaff = inputs.namaStaff.value.trim().toUpperCase();
+            const tglMulai = inputs.tglMulai.value;
+            const tglSelesai = inputs.tglSelesai.value;
+            const keterangan = inputs.keterangan.value.trim();
+
+            // Update duration badge live
+            if (tglMulai && tglSelesai) {
+                const days = calculateDays(tglMulai, tglSelesai);
+                // Check if end date is before start date
+                if (new Date(tglSelesai) < new Date(tglMulai)) {
+                    durationDisplay.innerHTML = '<span style="color:red">Tanggal selesai tidak valid</span>';
+                } else {
+                    durationDisplay.textContent = `Durasi: ${days} Hari`;
+                }
+            } else {
+                durationDisplay.textContent = '';
+            }
+
+            // Validation: If fields are empty, show placeholder
+            if (!perihal && !noPaspor && !namaStaff && !tglMulai && !keterangan) {
+                outputResult.textContent = "Belum ada data yang diisi...";
+                outputResult.style.color = "#666";
+                return;
+            }
+
+            // Construct Text Block
+            // Format Tanggal: Start - End (Total hari)
+            let dateText = "";
+            let daysText = "";
+            
+            if (tglMulai && tglSelesai) {
+                const days = calculateDays(tglMulai, tglSelesai);
+                const startStr = formatDateIndo(tglMulai);
+                const endStr = formatDateIndo(tglSelesai);
+                dateText = `${startStr} - ${endStr}`;
+                daysText = `(${days} hari)`;
+            } else if (tglMulai) {
+                dateText = formatDateIndo(tglMulai);
+            } else {
+                dateText = "[TANGGAL BELUM DIISI]";
+            }
+
+            const finalText = 
+`PENGAJUAN CUTI STAFF : 
+Situs : Linetogel
+Perihal : ${perihal || '-'}
+No Paspor : (${noPaspor || '-'})
+Nama Staff : ${namaStaff || '-'}
+Tanggal Pengajuan : ${dateText} ${daysText}
+Keterangan : ${keterangan || '-'}`;
+
+            outputResult.textContent = finalText;
+            outputResult.style.color = "#dfe6e9"; // Reset color to light gray
+        }
+
+        // Event Listeners: Update on every keystroke/change
+        Object.values(inputs).forEach(input => {
+            input.addEventListener('input', generateOutput);
+        });
+
+        // Copy to Clipboard Function
+        function copyToClipboard() {
+            const textToCopy = outputResult.textContent;
+            
+            if (textToCopy === "Belum ada data yang diisi...") {
+                showToast("Isi data terlebih dahulu!", "#ff7675");
+                return;
+            }
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast("Data berhasil disalin!", "#00b894");
+            }).catch(err => {
+                console.error('Gagal menyalin: ', err);
+                showToast("Gagal menyalin text", "#ff7675");
+            });
+        }
+
+        // Toast Notification Logic
+        function showToast(message, color) {
+            toast.innerHTML = `
+                <svg style="width:20px;height:20px;fill:white" viewBox="0 0 24 24"><path d="M9,16.17L4.83,12L3.41,13.41L9,19L21,7L19.59,5.59L9,16.17Z" /></svg>
+                ${message}
+            `;
+            toast.style.background = color;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
