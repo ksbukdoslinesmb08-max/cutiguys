@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Pengajuan Cuti Staff - Premium Edition</title>
+    <title>Form Pengajuan HR Admin - Premium Edition</title>
     <style>
         :root {
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
             --accent-color: #00cec9;
+            --danger-color: #ff7675; /* Warna untuk menu Resign */
             --text-main: #ffffff;
             --text-muted: #dfe6e9;
             --glass-bg: rgba(255, 255, 255, 0.08);
@@ -32,7 +33,7 @@
             align-items: center;
             padding: 20px;
             color: var(--text-main);
-            overflow-x: hidden; /* Prevent scroll from moving background elements */
+            overflow-x: hidden; 
         }
 
         /* --- 1. PREMIUM ANIMATED BACKGROUND --- */
@@ -55,45 +56,10 @@
             animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .blob-1 {
-            width: 50vw;
-            height: 50vw;
-            background: #6c5ce7;
-            top: -10%;
-            left: -10%;
-            animation-duration: 25s;
-        }
-
-        .blob-2 {
-            width: 40vw;
-            height: 40vw;
-            background: #e84393; /* Pinkish */
-            bottom: -5%;
-            right: -5%;
-            animation-duration: 30s;
-            animation-direction: alternate-reverse;
-        }
-
-        .blob-3 {
-            width: 35vw;
-            height: 35vw;
-            background: #00b894; /* Teal accent */
-            top: 30%;
-            left: 30%;
-            animation-duration: 22s;
-            opacity: 0.4;
-            mix-blend-mode: overlay;
-        }
-
-        .blob-4 {
-            width: 30vw;
-            height: 30vw;
-            background: #0984e3; /* Blue */
-            bottom: 10%;
-            left: 10%;
-            animation-duration: 28s;
-            opacity: 0.5;
-        }
+        .blob-1 { width: 50vw; height: 50vw; background: #6c5ce7; top: -10%; left: -10%; animation-duration: 25s; }
+        .blob-2 { width: 40vw; height: 40vw; background: #e84393; bottom: -5%; right: -5%; animation-duration: 30s; animation-direction: alternate-reverse; }
+        .blob-3 { width: 35vw; height: 35vw; background: #00b894; top: 30%; left: 30%; animation-duration: 22s; opacity: 0.4; mix-blend-mode: overlay; }
+        .blob-4 { width: 30vw; height: 30vw; background: #0984e3; bottom: 10%; left: 10%; animation-duration: 28s; opacity: 0.5; }
 
         @keyframes float {
             0% { transform: translate(0, 0) scale(1); }
@@ -174,6 +140,12 @@
             box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
             border-color: rgba(255,255,255,0.2);
             font-weight: 600;
+        }
+
+        /* Style Khusus untuk Tombol Resign Aktif */
+        .nav-btn#btnResign.active {
+            background: linear-gradient(135deg, #d63031, #ff7675);
+            box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4);
         }
 
         .nav-btn svg {
@@ -260,8 +232,13 @@
             background: rgba(255, 255, 255, 0.1);
             box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.15);
         }
+        
+        /* Focus state untuk mode resign (merah) */
+        .mode-resign-active input:focus, .mode-resign-active textarea:focus {
+            border-color: var(--danger-color);
+            box-shadow: 0 0 0 4px rgba(255, 118, 117, 0.15);
+        }
 
-        /* Date Inputs specific styling fix for dark calendar icon */
         input[type="date"] {
             color-scheme: dark;
         }
@@ -295,6 +272,13 @@
             border-radius: 6px;
             display: inline-block;
             border: 1px solid rgba(0, 206, 201, 0.2);
+        }
+
+        /* Label khusus Resign */
+        .resign-label {
+            color: var(--danger-color);
+            background: rgba(255, 118, 117, 0.1);
+            border: 1px solid rgba(255, 118, 117, 0.2);
         }
 
         /* Output/Preview Area */
@@ -352,8 +336,16 @@
             filter: brightness(1.1);
         }
 
-        .btn-primary:active {
-            transform: translateY(-1px);
+        /* Tombol Resign Style */
+        .btn-danger {
+            background: linear-gradient(135deg, #d63031, #ff7675);
+            color: white;
+            box-shadow: 0 4px 20px rgba(214, 48, 49, 0.4);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 8px 25px rgba(214, 48, 49, 0.6);
+            transform: translateY(-3px);
         }
 
         /* Toast Notification */
@@ -398,47 +390,18 @@
         }
 
         /* Scrollbar Customization */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.1); }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 
         /* Responsive */
         @media (max-width: 950px) {
-            .layout-wrapper {
-                flex-direction: column;
-                min-height: auto;
-                margin: 10px;
-            }
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                padding: 1rem;
-                overflow-x: auto;
-                border-right: none;
-                border-bottom: 1px solid var(--glass-border);
-            }
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-            .nav-btn {
-                margin-bottom: 0;
-                margin-right: 10px;
-                white-space: nowrap;
-                flex: 0 0 auto;
-            }
-            .main-content {
-                padding: 1.5rem;
-            }
+            .layout-wrapper { flex-direction: column; min-height: auto; margin: 10px; }
+            .sidebar { width: 100%; flex-direction: row; padding: 1rem; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--glass-border); }
+            .content-grid { grid-template-columns: 1fr; }
+            .nav-btn { margin-bottom: 0; margin-right: 10px; white-space: nowrap; flex: 0 0 auto; }
+            .main-content { padding: 1.5rem; }
         }
     </style>
 </head>
@@ -475,10 +438,16 @@
                 <svg viewBox="0 0 24 24"><path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M13,7H11V11H7V13H11V17H13V13H17V11H13V7Z" /></svg>
                 Lokal + Kerja
             </button>
+
+            <!-- NEW MENU: RESIGN -->
+            <button class="nav-btn" onclick="switchMode('resign')" id="btnResign">
+                <svg viewBox="0 0 24 24"><path d="M16.56,5.44L15.11,6.89C16.84,7.94 18,9.83 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12C6,9.83 7.16,7.94 8.88,6.88L7.44,5.44C5.36,6.88 4,9.28 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12C20,9.28 18.64,6.88 16.56,5.44M13,3H11V13H13" /></svg>
+                Pengajuan Resign
+            </button>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <main class="main-content" id="mainContentArea">
             <div class="section-header">
                 <h2 id="pageTitle">Form Pengajuan Cuti</h2>
                 <p id="pageDesc">Silakan lengkapi formulir pengajuan cuti staff di bawah ini.</p>
@@ -500,8 +469,8 @@
                                     <label for="namaStaff">Nama Staff</label>
                                     <input type="text" id="namaStaff" placeholder="Nama Lengkap" autocomplete="off">
                                 </div>
-                                <div class="form-group">
-                                    <label for="noPaspor">No Paspor</label>
+                                <div class="form-group" id="groupPaspor">
+                                    <label for="noPaspor">No Paspor / ID</label>
                                     <input type="text" id="noPaspor" placeholder="Nomor Paspor" autocomplete="off">
                                 </div>
                             </div>
@@ -584,7 +553,23 @@
                                 <div id="hintKerja2" class="duration-hint"></div>
                             </div>
 
-                            <div class="form-group" style="margin-top: 1.5rem;">
+                            <!-- NEW MODE 4: RESIGN -->
+                            <div id="sectionResign" class="mode-section">
+                                <div class="date-group-label resign-label">DETAIL RESIGN</div>
+                                
+                                <div class="form-group" style="margin-top: 1rem;">
+                                    <label for="tglResign">Tanggal Pengajuan</label>
+                                    <input type="date" id="tglResign">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="keteranganResign">Keterangan</label>
+                                    <textarea id="keteranganResign" placeholder="Contoh: Tidak melanjutkan Kontrak..." rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Generic Keterangan (Non-Resign modes) -->
+                            <div class="form-group" id="groupKeterangan" style="margin-top: 1.5rem;">
                                 <label for="keterangan">Keterangan (Opsional)</label>
                                 <textarea id="keterangan" placeholder="Catatan tambahan..." rows="2"></textarea>
                             </div>
@@ -598,7 +583,7 @@
                         <span class="preview-label">Result Teks</span>
                         <div class="preview-area" id="outputResult">Isi formulir untuk melihat hasil...</div>
                         
-                        <button class="btn-action btn-primary" onclick="copyToClipboard()">
+                        <button id="btnCopyAction" class="btn-action btn-primary" onclick="copyToClipboard()">
                             <svg class="icon" viewBox="0 0 24 24" style="width:20px;height:20px;fill:white"><path d="M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2 0 0,0 8,23H19A2,2 0 0,0 21,21V7A2,2 0 0,0 19,5M16,1H4A2,2 0 0,0 2,3V17H4V3H16V1Z" /></svg>
                             Salin Teks
                         </button>
@@ -624,6 +609,12 @@
             namaStaff: document.getElementById('namaStaff'),
             noPaspor: document.getElementById('noPaspor'),
             keterangan: document.getElementById('keterangan')
+        };
+
+        // Specific Resign Inputs
+        const inputsResign = {
+            tgl: document.getElementById('tglResign'),
+            ket: document.getElementById('keteranganResign')
         };
 
         // Standard Inputs
@@ -656,16 +647,19 @@
         const outputResult = document.getElementById('outputResult');
         const pageTitle = document.getElementById('pageTitle');
         const pageDesc = document.getElementById('pageDesc');
+        const btnCopy = document.getElementById('btnCopyAction');
+        const mainContent = document.getElementById('mainContentArea');
+        const groupPaspor = document.getElementById('groupPaspor');
+        const groupKeterangan = document.getElementById('groupKeterangan');
         
         // --- Utilities ---
         
-        // Format: 29 januari 2026 (Lowercase Month)
         function formatDateIndo(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString);
             const months = [
-                'januari', 'februari', 'maret', 'april', 'mei', 'juni', 
-                'juli', 'agustus', 'september', 'oktober', 'november', 'desember'
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
             ];
             const day = date.getDate();
             const month = months[date.getMonth()];
@@ -690,68 +684,109 @@
             document.getElementById('btnStandard').classList.toggle('active', mode === 'standard');
             document.getElementById('btnCombined').classList.toggle('active', mode === 'combined');
             document.getElementById('btnLocalWork').classList.toggle('active', mode === 'localwork');
+            document.getElementById('btnResign').classList.toggle('active', mode === 'resign');
             
             // Update Sections
             document.getElementById('sectionStandard').classList.toggle('active', mode === 'standard');
             document.getElementById('sectionCombined').classList.toggle('active', mode === 'combined');
             document.getElementById('sectionLocalWork').classList.toggle('active', mode === 'localwork');
+            document.getElementById('sectionResign').classList.toggle('active', mode === 'resign');
 
-            // Update Header Info
-            if (mode === 'standard') {
-                pageTitle.textContent = "Form Pengajuan Cuti Biasa";
-                pageDesc.textContent = "Cuti indo/Cuti Lokal (Single Mode).";
-            } else if (mode === 'combined') {
-                pageTitle.textContent = "Form Cuti Kerja + Lokal";
-                pageDesc.textContent = "Input urutan: Cuti Kerja dilanjutkan Cuti Lokal.";
-            } else if (mode === 'localwork') {
-                pageTitle.textContent = "Form Cuti Lokal + Kerja";
-                pageDesc.textContent = "Input urutan: Cuti Lokal dilanjutkan Cuti Kerja.";
+            // Update UI Theme based on mode
+            if (mode === 'resign') {
+                mainContent.classList.add('mode-resign-active');
+                pageTitle.textContent = "Form Pengajuan Resign";
+                pageDesc.textContent = "Generate format teks untuk staff yang resign/serah terima.";
+                btnCopy.classList.remove('btn-primary');
+                btnCopy.classList.add('btn-danger');
+                // Sembunyikan input umum yang tidak dipakai di mode ini agar rapi
+                groupPaspor.style.display = 'none'; 
+                groupKeterangan.style.display = 'none';
+                
+                // Set default value untuk perihal jika kosong
+                if(!inputs.perihal.value) inputs.perihal.value = "PENGAJUAN RESIGN";
+            } else {
+                mainContent.classList.remove('mode-resign-active');
+                btnCopy.classList.remove('btn-danger');
+                btnCopy.classList.add('btn-primary');
+                groupPaspor.style.display = 'block';
+                groupKeterangan.style.display = 'block';
+
+                if (mode === 'standard') {
+                    pageTitle.textContent = "Form Pengajuan Cuti Biasa";
+                    pageDesc.textContent = "Cuti indo/Cuti Lokal (Single Mode).";
+                } else if (mode === 'combined') {
+                    pageTitle.textContent = "Form Cuti Kerja + Lokal";
+                    pageDesc.textContent = "Input urutan: Cuti Kerja dilanjutkan Cuti Lokal.";
+                } else if (mode === 'localwork') {
+                    pageTitle.textContent = "Form Cuti Lokal + Kerja";
+                    pageDesc.textContent = "Input urutan: Cuti Lokal dilanjutkan Cuti Kerja.";
+                }
             }
             generateOutput();
         }
 
         function generateOutput() {
-            // Get Common Data
             let perihal = inputs.perihal.value.trim().toUpperCase();
             const namaStaff = inputs.namaStaff.value.trim().toUpperCase();
             const noPaspor = inputs.noPaspor.value.trim();
-            const keterangan = inputs.keterangan.value.trim();
-
-            // Validation: Minimal Nama harus ada
-            if (!namaStaff) {
-                outputResult.textContent = "Isi Nama Staff untuk memulai...";
-                outputResult.style.color = "rgba(255,255,255,0.3)";
-                return;
-            }
-
             let finalText = "";
-            const situs = "LINETOGEL";
 
-            if (currentMode === 'standard') {
-                // --- Standard Logic ---
-                const tglMulai = inputsStd.mulai.value;
-                const tglSelesai = inputsStd.selesai.value;
-
-                let daysText = "";
-                let dateText = "[TANGGAL BELUM LENGKAP]";
+            // Logic Resign (Prioritas)
+            if (currentMode === 'resign') {
+                const tgl = inputsResign.tgl.value;
+                const ket = inputsResign.ket.value.trim();
                 
-                if (tglMulai && tglSelesai) {
-                    const days = getDaysDiff(tglMulai, tglSelesai);
-                    if (new Date(tglSelesai) < new Date(tglMulai)) {
-                        inputsStd.hint.textContent = "Tanggal selesai salah";
-                        inputsStd.hint.style.color = "#ff7675";
-                        return;
-                    }
-                    inputsStd.hint.textContent = `Durasi: ${days} Hari`;
-                    inputsStd.hint.style.color = "var(--accent-color)";
-                    
-                    dateText = `${formatDateIndo(tglMulai)} - ${formatDateIndo(tglSelesai)}`;
-                    daysText = `(${days} hari)`;
-                } else {
-                    inputsStd.hint.textContent = "";
+                let staffDisplay = namaStaff;
+                // Logic: Jika user mengisi No Paspor/ID, gabungkan di belakang nama (Contoh: ANNEN C8486854)
+                if (noPaspor) {
+                    staffDisplay += "  " + noPaspor;
+                }
+
+                let tglText = "-";
+                if (tgl) {
+                    tglText = formatDateIndo(tgl);
                 }
 
                 finalText = 
+`Perihal : ${perihal || 'PENGAJUAN RESIGN'}
+Nama Staff :${staffDisplay}
+Tanggal Pengajuan : ${tglText}
+Keterangan : ${ket || '-'}`;
+
+            } else {
+                // Logic Cuti (Existing Logic)
+                const keterangan = inputs.keterangan.value.trim();
+                const situs = "LINETOGEL";
+
+                if (!namaStaff) {
+                    outputResult.textContent = "Isi Nama Staff untuk memulai...";
+                    outputResult.style.color = "rgba(255,255,255,0.3)";
+                    return;
+                }
+
+                if (currentMode === 'standard') {
+                    const tglMulai = inputsStd.mulai.value;
+                    const tglSelesai = inputsStd.selesai.value;
+                    let daysText = "";
+                    let dateText = "[TANGGAL BELUM LENGKAP]";
+                    
+                    if (tglMulai && tglSelesai) {
+                        const days = getDaysDiff(tglMulai, tglSelesai);
+                        if (new Date(tglSelesai) < new Date(tglMulai)) {
+                            inputsStd.hint.textContent = "Tanggal selesai salah";
+                            inputsStd.hint.style.color = "#ff7675";
+                            return;
+                        }
+                        inputsStd.hint.textContent = `Durasi: ${days} Hari`;
+                        inputsStd.hint.style.color = "var(--accent-color)";
+                        dateText = `${formatDateIndo(tglMulai)} - ${formatDateIndo(tglSelesai)}`;
+                        daysText = `(${days} hari)`;
+                    } else {
+                        inputsStd.hint.textContent = "";
+                    }
+
+                    finalText = 
 `PENGAJUAN CUTI STAFF : 
 Situs : ${situs}
 Perihal : ${perihal || '-'}
@@ -760,48 +795,40 @@ Nama Staff : ${namaStaff || '-'}
 Tanggal Pengajuan : ${dateText} ${daysText}
 Keterangan : ${keterangan || '-'}`;
 
-            } else if (currentMode === 'combined') {
-                // --- Combined (Kerja + Lokal) ---
-                
-                // 1. Cuti Kerja
-                const tglKM = inputsComb.kerjaMulai.value;
-                const tglKS = inputsComb.kerjaSelesai.value;
-                let textKerja = "-";
-                
-                if (tglKM && tglKS) {
-                    const days = getDaysDiff(tglKM, tglKS);
-                    if (new Date(tglKS) < new Date(tglKM)) {
-                        inputsComb.kerjaHint.textContent = "Invalid date";
-                        inputsComb.kerjaHint.style.color = "#ff7675";
-                    } else {
-                        inputsComb.kerjaHint.textContent = `${days} Hari`;
-                        inputsComb.kerjaHint.style.color = "var(--accent-color)";
-                        textKerja = `${formatDateIndo(tglKM)} - ${formatDateIndo(tglKS)} ( ${days} hari )`;
-                    }
-                } else {
-                    inputsComb.kerjaHint.textContent = "";
-                }
+                } else if (currentMode === 'combined') {
+                    const tglKM = inputsComb.kerjaMulai.value;
+                    const tglKS = inputsComb.kerjaSelesai.value;
+                    let textKerja = "-";
+                    
+                    if (tglKM && tglKS) {
+                        const days = getDaysDiff(tglKM, tglKS);
+                        if (new Date(tglKS) < new Date(tglKM)) {
+                            inputsComb.kerjaHint.textContent = "Invalid date";
+                            inputsComb.kerjaHint.style.color = "#ff7675";
+                        } else {
+                            inputsComb.kerjaHint.textContent = `${days} Hari`;
+                            inputsComb.kerjaHint.style.color = "var(--accent-color)";
+                            textKerja = `${formatDateIndo(tglKM)} - ${formatDateIndo(tglKS)} ( ${days} hari )`;
+                        }
+                    } else { inputsComb.kerjaHint.textContent = ""; }
 
-                // 2. Cuti Lokal
-                const tglLM = inputsComb.lokalMulai.value;
-                const tglLS = inputsComb.lokalSelesai.value;
-                let textLokal = "-";
+                    const tglLM = inputsComb.lokalMulai.value;
+                    const tglLS = inputsComb.lokalSelesai.value;
+                    let textLokal = "-";
 
-                if (tglLM && tglLS) {
-                    const days = getDaysDiff(tglLM, tglLS);
-                    if (new Date(tglLS) < new Date(tglLM)) {
-                        inputsComb.lokalHint.textContent = "Invalid date";
-                        inputsComb.lokalHint.style.color = "#ff7675";
-                    } else {
-                        inputsComb.lokalHint.textContent = `${days} Hari`;
-                        inputsComb.lokalHint.style.color = "var(--accent-color)";
-                        textLokal = `${formatDateIndo(tglLM)} - ${formatDateIndo(tglLS)} ( ${days} hari )`;
-                    }
-                } else {
-                    inputsComb.lokalHint.textContent = "";
-                }
+                    if (tglLM && tglLS) {
+                        const days = getDaysDiff(tglLM, tglLS);
+                        if (new Date(tglLS) < new Date(tglLM)) {
+                            inputsComb.lokalHint.textContent = "Invalid date";
+                            inputsComb.lokalHint.style.color = "#ff7675";
+                        } else {
+                            inputsComb.lokalHint.textContent = `${days} Hari`;
+                            inputsComb.lokalHint.style.color = "var(--accent-color)";
+                            textLokal = `${formatDateIndo(tglLM)} - ${formatDateIndo(tglLS)} ( ${days} hari )`;
+                        }
+                    } else { inputsComb.lokalHint.textContent = ""; }
 
-                finalText = 
+                    finalText = 
 `PENGAJUAN CUTI STAFF :
 Situs : ${situs}
 Perihal : ${perihal || 'CUTI KERJA + CUTI LOKAL'}
@@ -809,53 +836,42 @@ No Paspor : ${noPaspor || '-'}
 Nama Staff : ${namaStaff}
 CUTI KERJA : ${textKerja}
 CUTI LOKAL : ${textLokal}`;
-                
-                if(keterangan) {
-                    finalText += `\nKeterangan : ${keterangan}`;
-                }
+                    if(keterangan) finalText += `\nKeterangan : ${keterangan}`;
 
-            } else if (currentMode === 'localwork') {
-                // --- Local + Work ---
-                
-                // 1. Cuti Lokal
-                const tglLM = inputsLW.lokalMulai.value;
-                const tglLS = inputsLW.lokalSelesai.value;
-                let textLokal = "-";
+                } else if (currentMode === 'localwork') {
+                    const tglLM = inputsLW.lokalMulai.value;
+                    const tglLS = inputsLW.lokalSelesai.value;
+                    let textLokal = "-";
 
-                if (tglLM && tglLS) {
-                    const days = getDaysDiff(tglLM, tglLS);
-                    if (new Date(tglLS) < new Date(tglLM)) {
-                        inputsLW.lokalHint.textContent = "Tanggal salah";
-                        inputsLW.lokalHint.style.color = "#ff7675";
-                    } else {
-                        inputsLW.lokalHint.textContent = `${days} Hari`;
-                        inputsLW.lokalHint.style.color = "var(--accent-color)";
-                        textLokal = `${formatDateIndo(tglLM)} - ${formatDateIndo(tglLS)} ( ${days} hari )`;
-                    }
-                } else {
-                    inputsLW.lokalHint.textContent = "";
-                }
+                    if (tglLM && tglLS) {
+                        const days = getDaysDiff(tglLM, tglLS);
+                        if (new Date(tglLS) < new Date(tglLM)) {
+                            inputsLW.lokalHint.textContent = "Tanggal salah";
+                            inputsLW.lokalHint.style.color = "#ff7675";
+                        } else {
+                            inputsLW.lokalHint.textContent = `${days} Hari`;
+                            inputsLW.lokalHint.style.color = "var(--accent-color)";
+                            textLokal = `${formatDateIndo(tglLM)} - ${formatDateIndo(tglLS)} ( ${days} hari )`;
+                        }
+                    } else { inputsLW.lokalHint.textContent = ""; }
 
-                // 2. Cuti Kerja
-                const tglKM = inputsLW.kerjaMulai.value;
-                const tglKS = inputsLW.kerjaSelesai.value;
-                let textKerja = "-";
+                    const tglKM = inputsLW.kerjaMulai.value;
+                    const tglKS = inputsLW.kerjaSelesai.value;
+                    let textKerja = "-";
 
-                if (tglKM && tglKS) {
-                    const days = getDaysDiff(tglKM, tglKS);
-                    if (new Date(tglKS) < new Date(tglKM)) {
-                        inputsLW.kerjaHint.textContent = "Tanggal salah";
-                        inputsLW.kerjaHint.style.color = "#ff7675";
-                    } else {
-                        inputsLW.kerjaHint.textContent = `${days} Hari`;
-                        inputsLW.kerjaHint.style.color = "var(--accent-color)";
-                        textKerja = `${formatDateIndo(tglKM)} - ${formatDateIndo(tglKS)} ( ${days} hari )`;
-                    }
-                } else {
-                    inputsLW.kerjaHint.textContent = "";
-                }
+                    if (tglKM && tglKS) {
+                        const days = getDaysDiff(tglKM, tglKS);
+                        if (new Date(tglKS) < new Date(tglKM)) {
+                            inputsLW.kerjaHint.textContent = "Tanggal salah";
+                            inputsLW.kerjaHint.style.color = "#ff7675";
+                        } else {
+                            inputsLW.kerjaHint.textContent = `${days} Hari`;
+                            inputsLW.kerjaHint.style.color = "var(--accent-color)";
+                            textKerja = `${formatDateIndo(tglKM)} - ${formatDateIndo(tglKS)} ( ${days} hari )`;
+                        }
+                    } else { inputsLW.kerjaHint.textContent = ""; }
 
-                finalText = 
+                    finalText = 
 `PENGAJUAN CUTI STAFF :
 Situs : ${situs}
 Perihal : ${perihal || 'CUTI LOKAL + CUTI KERJA'}
@@ -863,20 +879,18 @@ No Paspor : ${noPaspor || '-'}
 Nama Staff : ${namaStaff}
 CUTI LOKAL : ${textLokal}
 CUTI KERJA : ${textKerja}`;
-
-                if(keterangan) {
-                    finalText += `\nKeterangan : ${keterangan}`;
+                    if(keterangan) finalText += `\nKeterangan : ${keterangan}`;
                 }
             }
 
             outputResult.textContent = finalText;
-            outputResult.style.color = "#00cec9"; // Terminal cyan color
+            outputResult.style.color = "#00cec9"; 
         }
 
         // --- Event Listeners ---
-        // Bind input events to generate output
         const allInputs = [
             ...Object.values(inputs),
+            ...Object.values(inputsResign),
             inputsStd.mulai, inputsStd.selesai,
             inputsComb.kerjaMulai, inputsComb.kerjaSelesai,
             inputsComb.lokalMulai, inputsComb.lokalSelesai,
@@ -886,13 +900,12 @@ CUTI KERJA : ${textKerja}`;
 
         allInputs.forEach(el => {
             el.addEventListener('input', generateOutput);
-            el.addEventListener('change', generateOutput); // For date pickers specifically
+            el.addEventListener('change', generateOutput);
         });
 
-        // Copy Function
         function copyToClipboard() {
             const textToCopy = outputResult.textContent;
-            if (textToCopy.includes("Isi Nama Staff")) {
+            if (textToCopy.includes("Isi Nama Staff") || textToCopy.includes("Isi formulir")) {
                 showToast("Mohon isi data terlebih dahulu!", "#ff7675");
                 return;
             }
