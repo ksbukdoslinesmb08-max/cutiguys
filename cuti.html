@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Form Pengajuan Cuti LineTgl - Premium Edition</title>
+    <title>Form Pengajuan Cuti & Serah Terima LineTgl - Premium Edition</title>
     
-    <!-- Library FontAwesome untuk Ikon Resign -->
+    <!-- Library FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -13,7 +13,9 @@
             --primary-color: #6c5ce7;
             --secondary-color: #a29bfe;
             --accent-color: #00cec9;
-            --danger-color: #ff7675; /* Warna untuk menu Resign */
+            --danger-color: #ff7675;
+            --warning-color: #fdcb6e; /* Warna untuk Serah Terima */
+            --warning-hover: #ffeaa7;
             --text-main: #ffffff;
             --text-muted: #dfe6e9;
             --glass-bg: rgba(255, 255, 255, 0.08);
@@ -84,7 +86,7 @@
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
             overflow: hidden;
-            min-height: 700px;
+            min-height: 750px; /* Ditingkatkan sedikit untuk menampung form panjang */
             animation: fadeInUp 0.8s ease-out;
         }
 
@@ -139,35 +141,43 @@
         }
 
         .nav-btn.active {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
-            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
             border-color: rgba(255,255,255,0.2);
             font-weight: 600;
         }
 
-        /* Style Khusus untuk Tombol Resign Aktif */
+        /* Style Aktif Default (Cuti) */
+        .nav-btn#btnStandard.active, .nav-btn#btnCombined.active, .nav-btn#btnLocalWork.active {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.4);
+        }
+
+        /* Style Aktif Resign */
         .nav-btn#btnResign.active {
             background: linear-gradient(135deg, #d63031, #ff7675);
             box-shadow: 0 8px 20px rgba(214, 48, 49, 0.4);
         }
 
-        /* Style untuk Gambar Ikon Custom (GAMBAR HITAM DIUBAH JADI PUTIH) */
+        /* Style Aktif Serah Terima (Baru) */
+        .nav-btn#btnHandover.active {
+            background: linear-gradient(135deg, #e17055, #fdcb6e);
+            box-shadow: 0 8px 20px rgba(253, 203, 110, 0.4);
+            color: #2d3436; /* Teks hitam agar kontras dengan kuning */
+        }
+
         .menu-icon-img {
             width: 24px;
             height: 24px;
             object-fit: contain;
-            /* Filter ini membalikkan warna hitam menjadi putih agar terlihat di background gelap */
             filter: invert(1); 
         }
-
-        .nav-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
+        
+        /* Icon color fix untuk mode Handover (karena bg terang, icon harus gelap) */
+        .nav-btn#btnHandover.active i, .nav-btn#btnHandover.active svg {
+            color: #2d3436;
         }
 
-        /* Style Tambahan untuk Icon FontAwesome agar sejajar */
         .nav-btn i {
             width: 24px;
             text-align: center;
@@ -259,6 +269,12 @@
             box-shadow: 0 0 0 4px rgba(255, 118, 117, 0.15);
         }
 
+        /* Focus state untuk mode handover (kuning/oranye) */
+        .mode-handover-active input:focus, .mode-handover-active textarea:focus {
+            border-color: var(--warning-color);
+            box-shadow: 0 0 0 4px rgba(253, 203, 110, 0.15);
+        }
+
         input[type="date"] {
             color-scheme: dark;
         }
@@ -294,11 +310,16 @@
             border: 1px solid rgba(0, 206, 201, 0.2);
         }
 
-        /* Label khusus Resign */
         .resign-label {
             color: var(--danger-color);
             background: rgba(255, 118, 117, 0.1);
             border: 1px solid rgba(255, 118, 117, 0.2);
+        }
+
+        .handover-label {
+            color: var(--warning-color);
+            background: rgba(253, 203, 110, 0.1);
+            border: 1px solid rgba(253, 203, 110, 0.2);
         }
 
         /* Output/Preview Area */
@@ -313,6 +334,8 @@
             margin-bottom: 1.5rem;
             border: 1px solid rgba(255,255,255,0.1);
             min-height: 250px;
+            max-height: 500px;
+            overflow-y: auto;
             font-size: 0.9rem;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
         }
@@ -356,7 +379,6 @@
             filter: brightness(1.1);
         }
 
-        /* Tombol Resign Style */
         .btn-danger {
             background: linear-gradient(135deg, #d63031, #ff7675);
             color: white;
@@ -366,6 +388,33 @@
         .btn-danger:hover {
             box-shadow: 0 8px 25px rgba(214, 48, 49, 0.6);
             transform: translateY(-3px);
+        }
+
+        /* Tombol Serah Terima Style */
+        .btn-warning {
+            background: linear-gradient(135deg, #e17055, #fdcb6e);
+            color: #2d3436;
+            box-shadow: 0 4px 20px rgba(225, 112, 85, 0.4);
+        }
+        
+        .btn-warning:hover {
+            box-shadow: 0 8px 25px rgba(225, 112, 85, 0.6);
+            transform: translateY(-3px);
+        }
+
+        /* Custom Styling untuk Handover Group */
+        .handover-group {
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            background: rgba(0,0,0,0.2);
+        }
+        .handover-group h4 {
+            font-size: 0.85rem;
+            color: var(--warning-color);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
         }
 
         /* Toast Notification */
@@ -444,25 +493,31 @@
                 Cuti LineTgl
             </div>
             
-            <!-- MENU 1: Cuti Biasa (PAKAI FOTO HITAM) -->
+            <!-- MENU 1: Cuti Biasa -->
             <button class="nav-btn active" onclick="switchMode('standard')" id="btnStandard">
                 <img src="https://z-cdn-media.chatglm.cn/files/286e33b6-d000-4dc2-99ea-c257dcdefdfd.png?auth_key=1869503841-4e49a666667448fcbb97daac1db1be8e-0-77629e15a588b5071a8a77a320c336a3" class="menu-icon-img" alt="Cuti Biasa">
                 Cuti Biasa
             </button>
             
-            <!-- MENU 2: Kerja + Lokal (PAKAI FOTO HITAM) -->
+            <!-- MENU 2: Kerja + Lokal -->
             <button class="nav-btn" onclick="switchMode('combined')" id="btnCombined">
                 <img src="https://z-cdn-media.chatglm.cn/files/286e33b6-d000-4dc2-99ea-c257dcdefdfd.png?auth_key=1869503841-4e49a666667448fcbb97daac1db1be8e-0-77629e15a588b5071a8a77a320c336a3" class="menu-icon-img" alt="Kerja Lokal">
                 Kerja + Lokal
             </button>
 
-            <!-- MENU 3: Lokal + Kerja (PAKAI FOTO HITAM) -->
+            <!-- MENU 3: Lokal + Kerja -->
             <button class="nav-btn" onclick="switchMode('localwork')" id="btnLocalWork">
                 <img src="https://z-cdn-media.chatglm.cn/files/286e33b6-d000-4dc2-99ea-c257dcdefdfd.png?auth_key=1869503841-4e49a666667448fcbb97daac1db1be8e-0-77629e15a588b5071a8a77a320c336a3" class="menu-icon-img" alt="Lokal Kerja">
                 Lokal + Kerja
             </button>
 
-            <!-- MENU 4: Resign (FONTAWESOME) -->
+            <!-- MENU 4: Serah Terima (BARU) -->
+            <button class="nav-btn" onclick="switchMode('handover')" id="btnHandover">
+                <i class="fas fa-handshake"></i>
+                Serah Terima
+            </button>
+
+            <!-- MENU 5: Resign -->
             <button class="nav-btn" onclick="switchMode('resign')" id="btnResign">
                 <i class="fas fa-exclamation-circle"></i>
                 Pengajuan Resign
@@ -516,7 +571,6 @@
 
                             <!-- Mode 2: Combined (Kerja + Lokal) -->
                             <div id="sectionCombined" class="mode-section">
-                                <!-- Cuti Kerja -->
                                 <div class="date-group-label">1. CUTI KERJA</div>
                                 <div class="date-row">
                                     <div class="form-group">
@@ -530,7 +584,6 @@
                                 </div>
                                 <div id="hintKerja" class="duration-hint"></div>
 
-                                <!-- Cuti Lokal -->
                                 <div class="date-group-label">2. CUTI LOKAL</div>
                                 <div class="date-row">
                                     <div class="form-group">
@@ -547,7 +600,6 @@
 
                             <!-- Mode 3: Local + Work -->
                             <div id="sectionLocalWork" class="mode-section">
-                                <!-- Cuti Lokal First -->
                                 <div class="date-group-label">1. CUTI LOKAL</div>
                                 <div class="date-row">
                                     <div class="form-group">
@@ -561,7 +613,6 @@
                                 </div>
                                 <div id="hintLokal2" class="duration-hint"></div>
 
-                                <!-- Cuti Kerja Second -->
                                 <div class="date-group-label">2. CUTI KERJA</div>
                                 <div class="date-row">
                                     <div class="form-group">
@@ -576,15 +627,87 @@
                                 <div id="hintKerja2" class="duration-hint"></div>
                             </div>
 
-                            <!-- NEW MODE 4: RESIGN -->
+                            <!-- NEW MODE 4: SERAH TERIMA -->
+                            <div id="sectionHandover" class="mode-section">
+                                <div class="date-group-label handover-label">DATA AKUN</div>
+                                
+                                <!-- Google -->
+                                <div class="handover-group">
+                                    <h4>Google Account</h4>
+                                    <div class="form-group">
+                                        <label>Email Google</label>
+                                        <input type="text" id="hoGoogleEmail" placeholder="email@gmail.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="text" id="hoGooglePass" placeholder="Password">
+                                    </div>
+                                </div>
+
+                                <!-- BK -->
+                                <div class="handover-group">
+                                    <h4>BK Account</h4>
+                                    <div class="form-group">
+                                        <label>Email BK</label>
+                                        <input type="text" id="hoBkEmail" placeholder="email@bk.com">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Password</label>
+                                        <input type="text" id="hoBkPass" placeholder="Password">
+                                    </div>
+                                </div>
+
+                                <!-- PWR -->
+                                <div class="handover-group">
+                                    <h4>PWR Account</h4>
+                                    <div class="date-row">
+                                        <div class="form-group">
+                                            <label>Username</label>
+                                            <input type="text" id="hoPwrUser" placeholder="Username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Password</label>
+                                            <input type="text" id="hoPwrPass" placeholder="Password">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Admin -->
+                                <div class="handover-group">
+                                    <h4>Admin Account</h4>
+                                    <div class="date-row">
+                                        <div class="form-group">
+                                            <label>Username</label>
+                                            <input type="text" id="hoAdminUser" placeholder="Username">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Password</label>
+                                            <input type="text" id="hoAdminPass" placeholder="Password">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>PIN</label>
+                                        <input type="text" id="hoAdminPin" placeholder="PIN">
+                                    </div>
+                                </div>
+
+                                <!-- Authen All -->
+                                <div class="handover-group" style="border-color: var(--warning-color)">
+                                    <h4>Authen All</h4>
+                                    <div class="form-group">
+                                        <label>Kode Authen</label>
+                                        <textarea id="hoAuthen" rows="3" placeholder="Paste kode authen di sini..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- MODE 5: RESIGN -->
                             <div id="sectionResign" class="mode-section">
                                 <div class="date-group-label resign-label">DETAIL RESIGN</div>
-                                
                                 <div class="form-group" style="margin-top: 1rem;">
                                     <label for="tglResign">Tanggal Pengajuan</label>
                                     <input type="date" id="tglResign">
                                 </div>
-
                                 <div class="form-group">
                                     <label for="keteranganResign">Keterangan</label>
                                     <textarea id="keteranganResign" placeholder="Contoh: Tidak melanjutkan Kontrak..." rows="3"></textarea>
@@ -626,7 +749,7 @@
         // State Management
         let currentMode = 'standard'; 
 
-        // Element References
+        // Element References (Common)
         const inputs = {
             perihal: document.getElementById('perihal'),
             namaStaff: document.getElementById('namaStaff'),
@@ -638,6 +761,20 @@
         const inputsResign = {
             tgl: document.getElementById('tglResign'),
             ket: document.getElementById('keteranganResign')
+        };
+
+        // Specific Handover Inputs (NEW)
+        const inputsHandover = {
+            googleEmail: document.getElementById('hoGoogleEmail'),
+            googlePass: document.getElementById('hoGooglePass'),
+            bkEmail: document.getElementById('hoBkEmail'),
+            bkPass: document.getElementById('hoBkPass'),
+            pwrUser: document.getElementById('hoPwrUser'),
+            pwrPass: document.getElementById('hoPwrPass'),
+            adminUser: document.getElementById('hoAdminUser'),
+            adminPass: document.getElementById('hoAdminPass'),
+            adminPin: document.getElementById('hoAdminPin'),
+            authen: document.getElementById('hoAuthen')
         };
 
         // Standard Inputs
@@ -707,34 +844,43 @@
             document.getElementById('btnStandard').classList.toggle('active', mode === 'standard');
             document.getElementById('btnCombined').classList.toggle('active', mode === 'combined');
             document.getElementById('btnLocalWork').classList.toggle('active', mode === 'localwork');
+            document.getElementById('btnHandover').classList.toggle('active', mode === 'handover');
             document.getElementById('btnResign').classList.toggle('active', mode === 'resign');
             
             // Update Sections
             document.getElementById('sectionStandard').classList.toggle('active', mode === 'standard');
             document.getElementById('sectionCombined').classList.toggle('active', mode === 'combined');
             document.getElementById('sectionLocalWork').classList.toggle('active', mode === 'localwork');
+            document.getElementById('sectionHandover').classList.toggle('active', mode === 'handover');
             document.getElementById('sectionResign').classList.toggle('active', mode === 'resign');
 
-            // Update UI Theme based on mode
+            // Reset UI Classes
+            mainContent.classList.remove('mode-resign-active');
+            mainContent.classList.remove('mode-handover-active');
+            btnCopy.classList.remove('btn-danger', 'btn-warning');
+            btnCopy.classList.add('btn-primary');
+            groupPaspor.style.display = 'block';
+            groupKeterangan.style.display = 'block';
+
             if (mode === 'resign') {
                 mainContent.classList.add('mode-resign-active');
                 pageTitle.textContent = "Form Pengajuan Resign";
                 pageDesc.textContent = "Generate format teks untuk staff yang resign/serah terima.";
-                btnCopy.classList.remove('btn-primary');
-                btnCopy.classList.add('btn-danger');
-                // Sembunyikan input umum yang tidak dipakai di mode ini agar rapi
+                btnCopy.classList.replace('btn-primary', 'btn-danger');
                 groupPaspor.style.display = 'none'; 
                 groupKeterangan.style.display = 'none';
                 
-                // Set default value untuk perihal jika kosong
                 if(!inputs.perihal.value) inputs.perihal.value = "";
+            } else if (mode === 'handover') {
+                mainContent.classList.add('mode-handover-active');
+                pageTitle.textContent = "Form Serah Terima Akun";
+                pageDesc.textContent = "Input data akun untuk proses serah terima staff.";
+                btnCopy.classList.replace('btn-primary', 'btn-warning');
+                groupPaspor.style.display = 'none';
+                groupKeterangan.style.display = 'none'; // Keterangan diambil dari perihal atau field khusus jika ada
+                
+                if(!inputs.perihal.value) inputs.perihal.value = "Serah Terima";
             } else {
-                mainContent.classList.remove('mode-resign-active');
-                btnCopy.classList.remove('btn-danger');
-                btnCopy.classList.add('btn-primary');
-                groupPaspor.style.display = 'block';
-                groupKeterangan.style.display = 'block';
-
                 if (mode === 'standard') {
                     pageTitle.textContent = "Form Cuti Lokal/Ambil passport";
                     pageDesc.textContent = "Cuti indo/Cuti Lokal (Single Mode).";
@@ -755,21 +901,14 @@
             const noPaspor = inputs.noPaspor.value.trim();
             let finalText = "";
 
-            // Logic Resign (Prioritas)
+            // Logic Resign
             if (currentMode === 'resign') {
                 const tgl = inputsResign.tgl.value;
                 const ket = inputsResign.ket.value.trim();
                 
                 let staffDisplay = namaStaff;
-                // Logic: Jika user mengisi No Paspor/ID, gabungkan di belakang nama (Contoh: ANNEN C8486854)
-                if (noPaspor) {
-                    staffDisplay += "  " + noPaspor;
-                }
-
-                let tglText = "-";
-                if (tgl) {
-                    tglText = formatDateIndo(tgl);
-                }
+                if (noPaspor) staffDisplay += "  " + noPaspor;
+                let tglText = tgl ? formatDateIndo(tgl) : "-";
 
                 finalText = 
 `Perihal : ${perihal || ''}
@@ -777,8 +916,62 @@ Nama Staff :${staffDisplay}
 Tanggal Pengajuan : ${tglText}
 Keterangan : ${ket || '-'}`;
 
-            } else {
-                // Logic Cuti (Existing Logic)
+            } 
+            // Logic Handover (NEW)
+            else if (currentMode === 'handover') {
+                const situs = "LINETOGEL";
+                let dataAkun = "";
+
+                // Helper untuk menambahkan baris jika ada isinya
+                const addLine = (label, value) => { if(value) dataAkun += `${label}:${value}\n`; };
+
+                // Google
+                if(inputsHandover.googleEmail.value || inputsHandover.googlePass.value) {
+                    dataAkun += `google:${inputsHandover.googleEmail.value}\n`;
+                    dataAkun += `password:${inputsHandover.googlePass.value}\n\n`;
+                }
+
+                // BK
+                if(inputsHandover.bkEmail.value || inputsHandover.bkPass.value) {
+                    dataAkun += `bk:${inputsHandover.bkEmail.value}\n`;
+                    dataAkun += `password:${inputsHandover.bkPass.value}\n\n`;
+                }
+
+                // PWR
+                if(inputsHandover.pwrUser.value || inputsHandover.pwrPass.value) {
+                    dataAkun += `pwr:${inputsHandover.pwrUser.value}\n`;
+                    dataAkun += `password:${inputsHandover.pwrPass.value}\n\n`;
+                }
+
+                // Admin
+                if(inputsHandover.adminUser.value || inputsHandover.adminPass.value) {
+                    dataAkun += `admin:${inputsHandover.adminUser.value}\n`;
+                    dataAkun += `password:${inputsHandover.adminPass.value}\n`;
+                    if(inputsHandover.adminPin.value) {
+                        dataAkun += `pin:${inputsHandover.adminPin.value}\n`;
+                    }
+                    dataAkun += "\n";
+                }
+
+                // Authen All
+                if(inputsHandover.authen.value) {
+                    dataAkun += `authen all:${inputsHandover.authen.value}\n`;
+                }
+
+                // Header Output
+                finalText = `DATA SERAH TERIMA
+Situs : ${situs}
+Perihal : ${perihal}
+Nama Staff : ${namaStaff || '-'}
+
+ ${dataAkun}`;
+
+                // Jika kosong
+                if(!dataAkun) finalText += "(Belum ada data akun yang diisi)";
+
+            } 
+            // Logic Cuti (Existing)
+            else {
                 const keterangan = inputs.keterangan.value.trim();
                 const situs = "LINETOGEL";
 
@@ -914,6 +1107,7 @@ CUTI KERJA : ${textKerja}`;
         const allInputs = [
             ...Object.values(inputs),
             ...Object.values(inputsResign),
+            ...Object.values(inputsHandover),
             inputsStd.mulai, inputsStd.selesai,
             inputsComb.kerjaMulai, inputsComb.kerjaSelesai,
             inputsComb.lokalMulai, inputsComb.lokalSelesai,
@@ -928,7 +1122,7 @@ CUTI KERJA : ${textKerja}`;
 
         function copyToClipboard() {
             const textToCopy = outputResult.textContent;
-            if (textToCopy.includes("Isi Nama Staff") || textToCopy.includes("Isi formulir")) {
+            if (textToCopy.includes("Isi Nama Staff") || textToCopy.includes("Isi formulir") || textToCopy.includes("(Belum ada data akun")) {
                 showToast("Mohon isi data terlebih dahulu!", "#ff7675");
                 return;
             }
