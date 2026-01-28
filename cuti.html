@@ -537,7 +537,7 @@
                     <div class="card">
                         <form id="cutiForm">
                             <!-- Common Fields -->
-                            <div class="form-group">
+                            <div class="form-group" id="groupPerihal">
                                 <label for="perihal">Perihal</label>
                                 <input type="text" id="perihal" placeholder="..." autocomplete="off">
                             </div>
@@ -757,6 +757,9 @@
             keterangan: document.getElementById('keterangan')
         };
 
+        // Group References for Showing/Hiding
+        const groupPerihal = document.getElementById('groupPerihal');
+
         // Specific Resign Inputs
         const inputsResign = {
             tgl: document.getElementById('tglResign'),
@@ -859,8 +862,11 @@
             mainContent.classList.remove('mode-handover-active');
             btnCopy.classList.remove('btn-danger', 'btn-warning');
             btnCopy.classList.add('btn-primary');
+            
+            // Default visibility of common groups
             groupPaspor.style.display = 'block';
             groupKeterangan.style.display = 'block';
+            groupPerihal.style.display = 'block'; // Perihal default visible
 
             if (mode === 'resign') {
                 mainContent.classList.add('mode-resign-active');
@@ -877,7 +883,10 @@
                 pageDesc.textContent = "Input data akun untuk proses serah terima staff.";
                 btnCopy.classList.replace('btn-primary', 'btn-warning');
                 groupPaspor.style.display = 'none';
-                groupKeterangan.style.display = 'none'; // Keterangan diambil dari perihal atau field khusus jika ada
+                groupKeterangan.style.display = 'none';
+                
+                // --- HAPUS PERIHAL PADA MODE HANDOVER ---
+                groupPerihal.style.display = 'none';
                 
                 if(!inputs.perihal.value) inputs.perihal.value = "...";
             } else {
@@ -958,10 +967,9 @@ Keterangan : ${ket || '-'}`;
                     dataAkun += `authen all:${inputsHandover.authen.value}\n`;
                 }
 
-                // Header Output
+                // Header Output (Perihal DIHAPUS disini)
                 finalText = `DATA SERAH TERIMA
 Situs : ${situs}
-Perihal : ${perihal}
 Nama Staff : ${namaStaff || '-'}
 
  ${dataAkun}`;
