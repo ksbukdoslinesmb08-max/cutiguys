@@ -964,7 +964,7 @@ Keterangan : ${ket || '-'}`;
 
                 // Authen All
                 if(inputsHandover.authen.value) {
-                    dataAkun = `authen all:${inputsHandover.authen.value}\n`;
+                    dataAkun += `authen all:${inputsHandover.authen.value}\n`;
                 }
 
                 // Header Output (Perihal DIHAPUS disini)
@@ -975,7 +975,7 @@ Nama Staff : ${namaStaff || '-'}
  ${dataAkun}`;
 
                 // Jika kosong
-                if(!dataAkun) finalText = "(Belum ada data akun yang diisi)";
+                if(!dataAkun) finalText += "(Belum ada data akun yang diisi)";
 
             } 
             // Logic Cuti (Existing)
